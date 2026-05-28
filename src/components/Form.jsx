@@ -10,6 +10,10 @@ function Form() {
 
   const [usernameStatus, setUsernameStatus] = useState('idle');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [showMessageMail, setShowMessageMail] = useState(false);
 
   useEffect(() => {
     if (formData.username.length < 3) {
@@ -34,15 +38,44 @@ function Form() {
     return () => clearTimeout(timer);
   }, [formData.username]);
 
+  //Validiamo username
   const handleUsernameChange = (e) => {
     setFormData((prev) => ({ ...prev, username: e.target.value }));
     setUsernameStatus('idle');
   };
 
-  const handleMailChange = (e) => {
-    return;
+  //Validiamo l'email
+  const validateEmail = (email) => {
+    if (!email.trim()) return 'Email è richiesta';
+    if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email))
+      return 'Email non valida';
+    if (email.length > 50) return 'Email troppo lunga';
+    return '';
   };
 
+  const handleMailChange = (e) => {
+    setFormData((prev) => ({ ...prev, email: e.target.value }));
+    if (emailTouched) {
+      setEmailError(validateEmail(e.target.value));
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setEmailTouched(true);
+    setEmailError(validateEmail(formData.email));
+  };
+
+  //Ulteriore controllo sui campi del form
+  const isFormValid = () => {
+    return (
+      formData.username.length >= 3 &&
+      usernameStatus === 'available' &&
+      formData.email.trim() &&
+      !emailError
+    );
+  };
+
+  //Submit del form
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isFormValid()) return;
@@ -55,6 +88,10 @@ function Form() {
 
     setShowSuccess(true);
   };
+
+  if (showSuccess) {
+    return <SuccessMessage></SuccessMessage>;
+  }
 
   return (
     <form>
@@ -97,15 +134,23 @@ function Form() {
         </label>
         <input
           type="email"
-          className="form-control"
+          className={`form-control ${emailTouched && emailError ? 'border border-warning' : 'border border-secondary'}`}
           id="exampleInputEmail1"
           aria-describedby="emailHelp"
           value={formData.email}
           onChange={handleMailChange}
+          onBlur={handleEmailBlur}
           placeholder="Inserisci la tua mail"
         />
+
+        {emailTouched && emailError && <p className="text-sm">{emailError}</p>}
         <div id="emailHelp" className="form-text">
-          We'll never share your email with anyone else.
+          {validateEmail(formData.email) === '' && (
+            <div>
+              <p>Email Valida</p>
+            </div>
+          )}
+          Non condivideremo mai la tua mail con nessun altro
         </div>
       </div>
       <div className="mb-3 form-check">
@@ -127,6 +172,16 @@ function Form() {
         {isSubmitting ? <span>Inviando</span> : 'registrati'}
       </button>
     </form>
+  );
+}
+
+function SuccessMessage() {
+  return (
+    <div className="container bg bg-success rounded">
+      <div className="mt-5 p-5 text-white">
+        <h2>Complimenti ti sei registrato</h2>
+      </div>
+    </div>
   );
 }
 
