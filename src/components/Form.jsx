@@ -33,6 +33,20 @@ function Form() {
           onChange={handleUsernameChange}
           placeholder="Inserisci il tuo username"
         />
+
+        <div className="mt-3">
+          {usernameStatus === checking && (
+            <div className="spinner-border text-warning" role="status">
+              <span className="visually-hidden">Stiamo controllando</span>
+            </div>
+          )}
+
+          {usernameStatus === available && (
+            <div className="bg bg-success">
+              <p>Il nome è disponibile</p>
+            </div>
+          )}
+        </div>
       </div>
       <div className="mb-3">
         <label htmlFor="exampleInputEmail1" className="form-label">
