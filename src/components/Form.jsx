@@ -5,6 +5,14 @@ function Form() {
 
   const [username, setUsername] = useState('');
 
+  const handleUsernameChange = (e) => {
+    return;
+  };
+
+  const handleMailChange = (e) => {
+    return;
+  };
+
   return (
     <form>
       <div className="mb-3">
@@ -13,8 +21,11 @@ function Form() {
         </label>
         <input
           type="username"
-          className="form-control"
+          className={`form-control ${usernameStatus === 'taken' ? 'border border-warning' : usernameStatus === 'available' ? 'border border-success' : 'border border-secondary'}`}
           id="exampleInputPassword1"
+          value={username}
+          onBlur={handleUsernameChange}
+          placeholder="Inserisci il tuo username"
         />
       </div>
       <div className="mb-3">
@@ -26,6 +37,9 @@ function Form() {
           className="form-control"
           id="exampleInputEmail1"
           aria-describedby="emailHelp"
+          value={mail}
+          onBlur={handleMailChange}
+          placeholder="Inserisci la tua mail"
         />
         <div id="emailHelp" className="form-text">
           We'll never share your email with anyone else.
