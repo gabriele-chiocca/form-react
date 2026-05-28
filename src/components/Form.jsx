@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const takenUsername = ['admin', 'user', 'test', 'demo', 'mario', 'luigi'];
 
@@ -9,6 +9,23 @@ function Form() {
   });
 
   const [usernameStatus, setUsernameStatus] = useState('idle');
+
+  useEffect(() => {
+    if (formData.username.length < 3) {
+      setUsernameStatus('idle');
+      return;
+    }
+
+    const checkUsername = async () => {
+      setUsernameStatus('checking');
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const isAvailable = !takenUsername.includes(formData.username);
+
+      setUsernameStatus(isAvailable ? 'available' : 'taken');
+    };
+  });
 
   const handleUsernameChange = (e) => {
     setFormData((prev) => ({ ...prev, username: e.target.value }));
@@ -35,15 +52,21 @@ function Form() {
         />
 
         <div className="mt-3">
-          {usernameStatus === checking && (
+          {usernameStatus === 'checking' && (
             <div className="spinner-border text-warning" role="status">
               <span className="visually-hidden">Stiamo controllando</span>
             </div>
           )}
 
-          {usernameStatus === available && (
+          {usernameStatus === 'available' && (
             <div className="bg bg-success">
               <p>Il nome è disponibile</p>
+            </div>
+          )}
+
+          {usernameStatus === 'taken' && (
+            <div className="bg bg-danger">
+              <p>Il nome è stato già preso</p>
             </div>
           )}
         </div>
