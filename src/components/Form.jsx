@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+const takenUsername = ['admin', 'user', 'test', 'demo', 'mario', 'luigi'];
+
 function Form() {
   const [mail, setMail] = useState('');
 
@@ -20,7 +22,7 @@ function Form() {
           Username
         </label>
         <input
-          type="username"
+          type="text"
           className={`form-control ${usernameStatus === 'taken' ? 'border border-warning' : usernameStatus === 'available' ? 'border border-success' : 'border border-secondary'}`}
           id="exampleInputPassword1"
           value={username}
