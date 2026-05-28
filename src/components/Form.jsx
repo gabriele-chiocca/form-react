@@ -9,6 +9,7 @@ function Form() {
   });
 
   const [usernameStatus, setUsernameStatus] = useState('idle');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (formData.username.length < 3) {
@@ -19,13 +20,19 @@ function Form() {
     const checkUsername = async () => {
       setUsernameStatus('checking');
 
+      //   Simulazione chiamata Api
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      const isAvailable = !takenUsername.includes(formData.username);
+      const isAvailable = !takenUsername.includes(
+        formData.username.toLowerCase(),
+      );
 
       setUsernameStatus(isAvailable ? 'available' : 'taken');
     };
-  });
+
+    const timer = setTimeout(checkUsername, 500);
+    return () => clearTimeout(timer);
+  }, [formData.username]);
 
   const handleUsernameChange = (e) => {
     setFormData((prev) => ({ ...prev, username: e.target.value }));
@@ -34,6 +41,19 @@ function Form() {
 
   const handleMailChange = (e) => {
     return;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isFormValid()) return;
+
+    setIsSubmitting(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    setIsSubmitting(false);
+
+    setShowSuccess(true);
   };
 
   return (
@@ -46,7 +66,7 @@ function Form() {
           type="text"
           className={`form-control ${usernameStatus === 'taken' ? 'border border-warning' : usernameStatus === 'available' ? 'border border-success' : 'border border-secondary'}`}
           id="exampleInputPassword1"
-          value={username}
+          value={formData.username}
           onChange={handleUsernameChange}
           placeholder="Inserisci il tuo username"
         />
@@ -59,13 +79,13 @@ function Form() {
           )}
 
           {usernameStatus === 'available' && (
-            <div className="bg bg-success">
-              <p>Il nome è disponibile</p>
+            <div className="bg bg-success text-white p-3 rounded">
+              <p className="h5">Il nome è disponibile</p>
             </div>
           )}
 
           {usernameStatus === 'taken' && (
-            <div className="bg bg-danger">
+            <div className="bg bg-danger text-white p-3 rounded">
               <p>Il nome è stato già preso</p>
             </div>
           )}
@@ -80,8 +100,8 @@ function Form() {
           className="form-control"
           id="exampleInputEmail1"
           aria-describedby="emailHelp"
-          value={mail}
-          onBlur={handleMailChange}
+          value={formData.email}
+          onChange={handleMailChange}
           placeholder="Inserisci la tua mail"
         />
         <div id="emailHelp" className="form-text">
@@ -98,8 +118,13 @@ function Form() {
           Check me out
         </label>
       </div>
-      <button type="submit" className="btn btn-primary">
-        Submit
+      <button
+        type="submit"
+        onClick={handleSubmit}
+        disabled={!isFormValid() || isSubmitting}
+        className={`btn btn-primary ${isFormValid() && !isSubmitting ? 'bg bg-primary ' : 'bg bg-secondary'}`}
+      >
+        {isSubmitting ? <span>Inviando</span> : 'registrati'}
       </button>
     </form>
   );
