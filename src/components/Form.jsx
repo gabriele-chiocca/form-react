@@ -3,12 +3,16 @@ import { useState } from 'react';
 const takenUsername = ['admin', 'user', 'test', 'demo', 'mario', 'luigi'];
 
 function Form() {
-  const [mail, setMail] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+  });
 
-  const [username, setUsername] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState('idle');
 
   const handleUsernameChange = (e) => {
-    return;
+    setFormData((prev) => ({ ...prev, username: e.target.value }));
+    setUsernameStatus('idle');
   };
 
   const handleMailChange = (e) => {
@@ -26,7 +30,7 @@ function Form() {
           className={`form-control ${usernameStatus === 'taken' ? 'border border-warning' : usernameStatus === 'available' ? 'border border-success' : 'border border-secondary'}`}
           id="exampleInputPassword1"
           value={username}
-          onBlur={handleUsernameChange}
+          onChange={handleUsernameChange}
           placeholder="Inserisci il tuo username"
         />
       </div>
