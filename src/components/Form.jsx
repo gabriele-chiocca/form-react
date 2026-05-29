@@ -13,7 +13,6 @@ function Form() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailError, setEmailError] = useState(false);
-  const [showMessageMail, setShowMessageMail] = useState(false);
 
   useEffect(() => {
     if (formData.username.length < 3) {
